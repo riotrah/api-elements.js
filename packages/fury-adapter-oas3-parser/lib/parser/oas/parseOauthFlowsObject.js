@@ -66,13 +66,18 @@ function parseOauthFlowsObject(context, object) {
     parseObject(context, name, parseMember),
     flows => new namespace.elements.Array(flows.content),
     R.map((member) => {
-      const authScheme = new namespace.elements.AuthScheme();
+      const authSchemeFlow = new namespace.elements.Array();
 
-      authScheme.element = 'Oauth2 Scheme';
-      authScheme.push(new namespace.elements.Member('grantType', grantTypes[member.key.toValue()]));
-      authScheme.push(member.value.getMember('scopes'));
+      authSchemeFlow.push(new namespace.elements.Member('grantType', grantTypes[member.key.toValue()]));
+      authSchemeFlow.push(member.value.getMember('scopes'));
 
-      return authScheme;
+      ['refreshUrl', 'authorizationUrl', 'tokenUrl'].forEach((item) => {
+        if (member.value.get(item)) {
+          authSchemeFlow.push(member.value.get(item));
+        }
+      });
+
+      return authSchemeFlow;
     }));
 
   return parseOauthFlows(object);
