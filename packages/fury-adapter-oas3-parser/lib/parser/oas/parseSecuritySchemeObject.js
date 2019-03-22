@@ -10,6 +10,7 @@ const {
 const pipeParseResult = require('../../pipeParseResult');
 const parseObject = require('../parseObject');
 const parseString = require('../parseString');
+const parseOauthFlowsObject = require('./parseOauthFlowsObject');
 
 const name = 'Security Scheme Object';
 const requiredKeys = ['type'];
@@ -19,7 +20,7 @@ const passThrough = R.anyPass(R.map(hasKey, ['name', 'in', 'scheme', 'flows']));
 
 const isApiKeyScheme = securityScheme => securityScheme.getValue('type') === 'apiKey';
 const isHttpScheme = securityScheme => securityScheme.getValue('type') === 'http';
-// const isOauth2Scheme = securityScheme => securityScheme.getValue('type') === 'oauth2';
+const isOauth2Scheme = securityScheme => securityScheme.getValue('type') === 'oauth2';
 
 const isValidTypeValue = R.anyPass(R.map(hasValue, ['apiKey', 'http', 'oauth2', 'openIdConnect']));
 const isSupportedType = R.anyPass(R.map(hasValue, ['apiKey', 'http', 'oauth2']));
@@ -62,6 +63,16 @@ function validateHttpScheme(context, securityScheme) {
   ]);
 
   return parseObject(context, name, parseMember, ['scheme'], [], true)(securityScheme);
+}
+
+function validateOauth2Scheme(context, securityScheme) {
+  const parseMember = R.cond([
+    [hasKey('flows'), parseOauthFlowsObject],
+
+    [R.T, e => e],
+  ]);
+
+  return parseObject(context, name, parseMember, ['flows'], [], true)(securityScheme);
 }
 
 /**
@@ -110,14 +121,16 @@ function parseSecuritySchemeObject(context, object) {
     parseObject(context, name, parseMember, requiredKeys, [], true),
     R.when(isApiKeyScheme, R.curry(validateApiKeyScheme)(context)),
     R.when(isHttpScheme, R.curry(validateHttpScheme)(context)),
-    // R.when(isOauth2Scheme, parseSecuritySchemeFlowsObject),
+    R.when(isOauth2Scheme, R.curry(validateOauth2Scheme)(context)),
     (securityScheme) => {
       const authScheme = new namespace.elements.AuthScheme();
 
       const type = securityScheme.getValue('type');
       const scheme = securityScheme.getValue('scheme');
 
-      if (type === 'apiKey' || (type === 'http' && scheme === 'bearer')) {
+      if (type === 'oauth2') {
+        authScheme.element = 'Oauth2 Scheme';
+      } else if (type === 'apiKey' || (type === 'http' && scheme === 'bearer')) {
         authScheme.element = 'Token Authentication Scheme';
       } else if (type === 'http' && scheme === 'basic') {
         authScheme.element = 'Basic Authentication Scheme';

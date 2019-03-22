@@ -247,6 +247,78 @@ describe('Security Scheme Object', () => {
       expect(parseResult.length).to.equal(1);
       expect(parseResult).to.not.contain.annotations;
     });
+
+    it('does not complain about flows', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'http',
+        scheme: 'basic',
+        flows: 1,
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult).to.not.contain.annotations;
+    });
+  });
+
+  describe('when type is oauth2', () => {
+    it('parses correctly when scheme is oauth2', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'oauth2',
+        flows: {
+          password: {
+            tokenUrl: '/token',
+            scopes: {},
+          },
+        },
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthScheme);
+      expect(parseResult.get(0).element).to.equal('Oauth2 Scheme');
+    });
+
+    it('does not complain about name', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'oauth2',
+        flows: {},
+        name: 1,
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult).to.not.contain.annotations;
+    });
+
+    it('does not complain about in', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'oauth2',
+        flows: {},
+        in: 1,
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult).to.not.contain.annotations;
+    });
+
+    it('does not complain about scheme', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'oauth2',
+        flows: {},
+        scheme: 1,
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult).to.not.contain.annotations;
+    });
   });
 
   describe('when type is http', () => {
@@ -282,6 +354,19 @@ describe('Security Scheme Object', () => {
         type: 'http',
         scheme: 'basic',
         in: 1,
+      });
+
+      const parseResult = parse(context, securityScheme);
+
+      expect(parseResult.length).to.equal(1);
+      expect(parseResult).to.not.contain.annotations;
+    });
+
+    it('does not complain about flows', () => {
+      const securityScheme = new namespace.elements.Object({
+        type: 'http',
+        scheme: 'basic',
+        flows: 1,
       });
 
       const parseResult = parse(context, securityScheme);
