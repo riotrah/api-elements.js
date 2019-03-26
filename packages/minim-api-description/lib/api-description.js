@@ -26,6 +26,7 @@ const hrefVariables = require('./elements/href-variables');
 const asset = require('./elements/asset');
 const httpMessagePayload = require('./elements/http-message-payload');
 const authScheme = require('./elements/auth-scheme');
+const authSchemeRequirment = require('./elements/auth-scheme-requirement');
 const httpTransaction = require('./elements/http-transaction');
 const transition = require('./elements/transition');
 const resource = require('./elements/resource');
@@ -43,6 +44,7 @@ const namespace = (options) => {
   hrefVariables(options.base);
   asset(options.base);
   httpMessagePayload(options.base);
+  authSchemeRequirment(options.base);
   authScheme(options.base);
   httpTransaction(options.base);
   transition(options.base);

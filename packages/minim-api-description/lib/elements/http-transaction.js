@@ -35,12 +35,12 @@ module.exports = (namespace) => {
     }
 
     /**
-     * @name authSchemes
+     * @name authSchemeRequirments
      * @type ArrayElement
      * @memberof HttpTransaction.prototype
      */
-    get authSchemes() {
-      return this.attributes.get('authSchemes');
+    get authSchemeRequirments() {
+      return this.attributes.get('authSchemeRequirments');
     }
   }
 

@@ -40,7 +40,7 @@ function parseSecurityRequirementObject(context, object) {
   const parseSecurityRequirement = pipeParseResult(namespace,
     parseObject(context, name, parseMember),
     (securityRequirement) => {
-      const arr = new namespace.elements.Array([]);
+      const arr = new namespace.elements.AuthSchemeRequirment([]);
 
       securityRequirement.forEach((value, key) => {
         let e;
