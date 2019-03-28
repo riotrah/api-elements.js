@@ -105,17 +105,6 @@ describe('Operation Object', () => {
       expect(parseResult).to.contain.warning("'Operation Object' contains unsupported key 'deprecated'");
     });
 
-    it('provides warning for unsupported security key', () => {
-      const operation = new namespace.elements.Member('get', {
-        security: '',
-        responses: {},
-      });
-
-      const parseResult = parse(context, path, operation);
-
-      expect(parseResult).to.contain.warning("'Operation Object' contains unsupported key 'security'");
-    });
-
     it('does not provide warning/errors for extensions', () => {
       const operation = new namespace.elements.Member('get', {
         responses: {},
@@ -504,6 +493,88 @@ describe('Operation Object', () => {
           },
         ]);
       });
+    });
+  });
+
+  describe('#security', () => {
+    it('warns when security is not an array', () => {
+      const operation = new namespace.elements.Member('get', {
+        security: {},
+        responses: {},
+      });
+
+      const parseResult = parse(context, path, operation);
+
+      expect(parseResult.length).to.equal(2);
+      expect(parseResult.get(0)).to.be.instanceof(namespace.elements.Transition);
+
+      expect(parseResult).to.contain.warning("'Operation Object' 'security' is not an array");
+    });
+
+    it('parses correctly when there is a security requirement', () => {
+      const operation = new namespace.elements.Member('get', {
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        responses: {
+          200: {
+            description: 'dummy',
+          },
+        },
+      });
+
+      const parseResult = parse(context, path, operation);
+
+      expect(parseResult.length).to.equal(1);
+
+      const transition = parseResult.get(0);
+
+      expect(transition).to.be.instanceof(namespace.elements.Transition);
+      expect(transition.transactions.length).to.equal(1);
+
+      const transaction = transition.transactions.get(0);
+      const { authSchemeRequirements } = transaction;
+
+      expect(authSchemeRequirements).to.be.instanceof(namespace.elements.Array);
+      expect(authSchemeRequirements.length).to.equal(1);
+      expect(authSchemeRequirements.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
+    });
+
+    it('parses correctly when there are multiple security requirement', () => {
+      const operation = new namespace.elements.Member('get', {
+        security: [
+          {
+            apiKey: [],
+          },
+          {
+            custom: [],
+          },
+        ],
+        responses: {
+          200: {
+            description: 'dummy',
+          },
+        },
+      });
+
+      const parseResult = parse(context, path, operation);
+
+      expect(parseResult.length).to.equal(1);
+
+      const transition = parseResult.get(0);
+
+      expect(transition).to.be.instanceof(namespace.elements.Transition);
+      expect(transition.transactions.length).to.equal(1);
+
+      const transaction = transition.transactions.get(0);
+      const { authSchemeRequirements } = transaction;
+
+      expect(authSchemeRequirements).to.be.instanceof(namespace.elements.Array);
+      expect(authSchemeRequirements.length).to.equal(2);
+      expect(authSchemeRequirements.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
+      expect(authSchemeRequirements.get(1)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
     });
   });
 

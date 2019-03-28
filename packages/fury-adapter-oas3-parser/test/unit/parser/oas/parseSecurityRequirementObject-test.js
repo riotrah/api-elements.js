@@ -28,7 +28,7 @@ describe('Security Requirement Object', () => {
     const parseResult = parse(context, securityRequirement);
 
     expect(parseResult.length).to.equal(2);
-    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirment);
+    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
     expect(parseResult.get(0).length).to.equal(0);
 
     expect(parseResult).to.contain.warning("'Security Requirement Object' 'customApiKey' is not an array");
@@ -42,7 +42,7 @@ describe('Security Requirement Object', () => {
     const parseResult = parse(context, securityRequirement);
 
     expect(parseResult.length).to.equal(1);
-    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirment);
+    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
 
     const arr = parseResult.get(0);
 
@@ -62,7 +62,7 @@ describe('Security Requirement Object', () => {
     const parseResult = parse(context, securityRequirement);
 
     expect(parseResult.length).to.equal(1);
-    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirment);
+    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
 
     const arr = parseResult.get(0);
 
@@ -89,7 +89,7 @@ describe('Security Requirement Object', () => {
     const parseResult = parse(context, securityRequirement);
 
     expect(parseResult.length).to.equal(2);
-    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirment);
+    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
 
     const arr = parseResult.get(0);
 
@@ -115,7 +115,7 @@ describe('Security Requirement Object', () => {
     const parseResult = parse(context, securityRequirement);
 
     expect(parseResult.length).to.equal(1);
-    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirment);
+    expect(parseResult.get(0)).to.be.instanceof(namespace.elements.AuthSchemeRequirement);
 
     const arr = parseResult.get(0);
 

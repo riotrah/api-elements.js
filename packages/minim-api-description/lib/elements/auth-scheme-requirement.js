@@ -2,7 +2,7 @@ module.exports = (namespace) => {
   const ArrayElement = namespace.getElementClass('array');
 
   /**
-   * @class AuthSchemeRequirment
+   * @class AuthSchemeRequirement
    *
    * @param {Array} content
    * @param meta
@@ -10,12 +10,12 @@ module.exports = (namespace) => {
    *
    * @extends ArrayElement
    */
-  class AuthSchemeRequirment extends ArrayElement {
+  class AuthSchemeRequirement extends ArrayElement {
     constructor(...args) {
       super(...args);
-      this.element = 'authSchemeRequirment';
+      this.element = 'authSchemeRequirement';
     }
   }
 
-  namespace.register('authSchemeRequirment', AuthSchemeRequirment);
+  namespace.register('authSchemeRequirement', AuthSchemeRequirement);
 };

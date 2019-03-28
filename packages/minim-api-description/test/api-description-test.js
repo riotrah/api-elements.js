@@ -20,7 +20,7 @@ const HttpTransaction = namespace.getElementClass('httpTransaction');
 const HttpRequest = namespace.getElementClass('httpRequest');
 const HttpResponse = namespace.getElementClass('httpResponse');
 const Asset = namespace.getElementClass('asset');
-const AuthSchemeRequirment = namespace.getElementClass('authSchemeRequirment');
+const AuthSchemeRequirement = namespace.getElementClass('authSchemeRequirement');
 const AuthScheme = namespace.getElementClass('authScheme');
 const DataStructure = namespace.getElementClass('dataStructure');
 const MemberElement = namespace.getElementClass('member');
@@ -1064,11 +1064,11 @@ describe('API description namespace', () => {
       refracted = {
         element: 'httpTransaction',
         attributes: {
-          authSchemeRequirments: {
+          authSchemeRequirements: {
             element: 'array',
             content: [
               {
-                element: 'authSchemeRequirment',
+                element: 'authSchemeRequirement',
                 content: [
                   {
                     element: 'Token Authentication Scheme',
@@ -1108,10 +1108,10 @@ describe('API description namespace', () => {
     });
 
     it('should contain auth scheme requirements', () => {
-      const schemes = transaction.authSchemeRequirments;
+      const schemes = transaction.authSchemeRequirements;
       expect(schemes).to.have.length(1);
       schemes.forEach((item) => {
-        expect(item).to.be.an.instanceof(AuthSchemeRequirment);
+        expect(item).to.be.an.instanceof(AuthSchemeRequirement);
       });
     });
   });

@@ -39,25 +39,21 @@ function parseSecurityRequirementObject(context, object) {
 
   const parseSecurityRequirement = pipeParseResult(namespace,
     parseObject(context, name, parseMember),
-    (securityRequirement) => {
-      const arr = new namespace.elements.AuthSchemeRequirment([]);
+    e => new namespace.elements.AuthSchemeRequirement(e.content),
+    R.map((member) => {
+      let e;
+      const scopes = member.value.map(scope => scope.toValue());
 
-      securityRequirement.forEach((value, key) => {
-        let e;
-        const scopes = value.map(scope => scope.toValue());
+      if (scopes.length) {
+        e = new namespace.elements.Object({ scopes });
+      } else {
+        e = new namespace.elements.Object({});
+      }
 
-        if (scopes.length) {
-          e = new namespace.elements.Object({ scopes });
-        } else {
-          e = new namespace.elements.Object({});
-        }
+      e.element = member.key.toValue();
 
-        e.element = key.toValue();
-        arr.push(e);
-      });
-
-      return arr;
-    });
+      return e;
+    }));
 
   return parseSecurityRequirement(object);
 }

@@ -143,7 +143,7 @@ function parseSecuritySchemeObject(context, object) {
           key = 'httpHeaderName';
         } else if (inValue === 'query') {
           key = 'queryParameterName';
-        } else if (inValue == 'cookie') {
+        } else if (inValue === 'cookie') {
           key = 'cookieParameterName';
         }
 
