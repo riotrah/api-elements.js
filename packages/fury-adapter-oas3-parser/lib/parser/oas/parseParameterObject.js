@@ -25,12 +25,12 @@ const isValidInValue = R.anyPass([
   hasValue('query'), hasValue('header'), hasValue('path'), hasValue('cookie'),
 ]);
 const isSupportedIn = R.anyPass([
-  hasValue('path'), hasValue('query'), hasValue('header'),
+  hasValue('path'), hasValue('query'),
 ]);
 
 const unreservedCharacterRegex = /^[A-z0-9\\.\\_\\~\\-]+$/;
-function nameContainsReservedCharacter(member) {
-  return !unreservedCharacterRegex.test(member.value.toValue());
+function nameContainsReservedCharacter(name) {
+  return !unreservedCharacterRegex.test(name.toValue());
 }
 
 function validateRequiredForPathParameter(context, object, parameter) {
@@ -49,6 +49,47 @@ function validateRequiredForPathParameter(context, object, parameter) {
   }
 
   parameter.set('required', true);
+
+  return parseResult;
+}
+
+function validateNameByLocation(context, object, parameter) {
+  const { namespace } = context;
+  const parseResult = new context.namespace.elements.ParseResult([
+    parameter,
+  ]);
+
+  const hasLocation = R.curry((location, parameter) => parameter.getValue('in') === location);
+  ////const hasLocation = R.curry((location, parameter) => parameter.in === location);
+
+  //const name = object.get('name');
+  //const location = object.get('in');
+
+  const createUnsupportedNameValidationWarning = (name, location) => parseResult.push(createWarning(namespace, `'${name}' 'name' - validation with location '${location}' is not implemented`, parameter));
+
+  //const createUnsupportedNameError = 
+  //  parseResult.push(createError(namespace, `'${name}' 'name' contains unsupported characters. Only alphanumeric characters are currently supported`, parameter)
+  //);
+
+  //const validateName = R.when(nameContainsReservedCharacter, createUnsupportedNameError);
+
+  const validatePathName = (parameter) => {
+  //  //console.dir(parameter.get('name'))
+  //  //validateName(name);
+  }
+  const validateQueryName = (parameter) => {
+  //  //validateName(name);
+  };
+  const validateHeaderName = (parameter) => createUnsupportedNameValidationWarning(parameter.get('name'), 'header');
+  const validateCookieName = (parameter) => createUnsupportedNameValidationWarning(parameter.get('name'), 'cookie');
+
+  R.cond([
+  //  [hasLocation('path'), validatePathName],
+    [hasLocation('query'), validateQueryName],
+    [hasLocation('header'), validateHeaderName],
+    [hasLocation('cookie'), validateCookieName],
+  //  //[R.T, validateName]
+  ])(parameter);
 
   return parseResult;
 }
@@ -81,14 +122,8 @@ function parseParameterObject(context, object) {
     validateIn,
     ensureSupportedIn);
 
-  const createUnsupportedNameError = R.compose(
-    createError(namespace, `'${name}' 'name' contains unsupported characters. Only alphanumeric characters are currently supported`),
-    getValue
-  );
-  const validateName = R.when(nameContainsReservedCharacter, createUnsupportedNameError);
   const parseName = pipeParseResult(namespace,
-    parseString(context, name, true),
-    validateName);
+    parseString(context, name, true));
 
   const parseMember = R.cond([
     [hasKey('name'), parseName],
@@ -111,6 +146,7 @@ function parseParameterObject(context, object) {
   const parseParameter = pipeParseResult(namespace,
     parseObject(context, name, parseMember, requiredKeys),
     R.when(isPathParameter, R.curry(validateRequiredForPathParameter)(context, object)),
+    R.curry(validateNameByLocation)(context, object),
     (parameter) => {
       const example = parameter.get('example');
       const member = new namespace.elements.Member(parameter.get('name'), example);
@@ -127,6 +163,8 @@ function parseParameterObject(context, object) {
       }
 
       member.in = parameter.getValue('in');
+
+      //validateNameByLocation(context, object, member);
 
       return member;
     });

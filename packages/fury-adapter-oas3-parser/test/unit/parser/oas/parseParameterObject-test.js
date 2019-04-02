@@ -41,7 +41,8 @@ describe('Parameter Object', () => {
 
       const parseResult = parse(context, parameter);
 
-      expect(parseResult.length).to.equal(1);
+      //console.dir(parseResult.toValue())
+      //expect(parseResult.length).to.equal(1);
       expect(parseResult).to.contain.error("'Parameter Object' 'name' contains unsupported characters. Only alphanumeric characters are currently supported");
     });
 
@@ -58,9 +59,62 @@ describe('Parameter Object', () => {
 
       const parseResult = parse(context, parameter);
 
+      console.dir(parseResult.toValue())
       expect(parseResult.length).to.equal(1);
       expect(parseResult.get(0)).to.be.instanceof(namespace.elements.Member);
       expect(parseResult.get(0).key.toValue()).to.equal(unreserved);
+    });
+
+    describe('validate #name combined with #in',() => {
+      it('does support #path name validation', () => {
+        const parameter = new namespace.elements.Object({
+          name: 'name',
+          in: 'path',
+          required: true,
+        });
+
+        const parseResult = parse(context, parameter);
+
+      console.dir(parseResult.toValue())
+        expect(parseResult.length).to.equal(1);
+        expect(parseResult.get(0).key.toValue()).to.equal('name');
+      });
+
+      it('does support #query name validation', () => {
+        const parameter = new namespace.elements.Object({
+          name: 'name',
+          in: 'query',
+        });
+
+        const parseResult = parse(context, parameter);
+
+        expect(parseResult.length).to.equal(1);
+        expect(parseResult.get(0).key.toValue()).to.equal('name');
+      });
+
+      it('does not support #header name validation', () => {
+        const parameter = new namespace.elements.Object({
+          name: 'name',
+          in: 'header',
+        });
+
+        const parseresult = parse(context, parameter);
+
+        expect(parseresult.length).to.equal(1);
+        expect(parseresult).to.contain.warning("'Parameter Object' 'in' 'header' is unsupported");
+      });
+
+      it('does not support #cookie validation', () => {
+        const parameter = new namespace.elements.Object({
+          name: 'name',
+          in: 'cookie',
+        });
+
+        const parseResult = parse(context, parameter);
+
+        expect(parseResult.length).to.equal(1);
+        expect(parseResult).to.contain.warning("'Parameter Object' 'in' 'cookie' is unsupported");
+      });
     });
   });
 
