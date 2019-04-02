@@ -237,7 +237,7 @@ describe('Security Scheme Object', () => {
       const { members } = parseResult.get(0);
 
       expect(members.length).to.equal(1);
-      expect(members.get(0).key.toValue()).to.equal('cookieParameterName');
+      expect(members.get(0).key.toValue()).to.equal('cookieName');
       expect(members.get(0).value.toValue()).to.equal('example');
     });
 

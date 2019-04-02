@@ -144,7 +144,7 @@ function parseSecuritySchemeObject(context, object) {
         } else if (inValue === 'query') {
           key = 'queryParameterName';
         } else if (inValue === 'cookie') {
-          key = 'cookieParameterName';
+          key = 'cookieName';
         }
 
         authScheme.push(new namespace.elements.Member(key, securityScheme.get('name')));
